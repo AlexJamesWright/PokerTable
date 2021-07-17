@@ -1,5 +1,3 @@
-from pokertable.errors import PlayerIDError
-
 class Player:
     
     name = 'BasePlayer'
@@ -12,5 +10,5 @@ class Player:
     def has(self, amount: float):
         return self.stack >= amount
     
-
-
+    def __repr__(self):
+        return f"Player {self.id}: stack={self.stack}"
