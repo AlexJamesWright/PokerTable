@@ -32,7 +32,7 @@ class Game:
         
         while self.anotherRound():
             # New round 
-            round = Round(self.playersDict, cards[i], self.dealerButtonIndex)
+            round = Round(self.playersDict, cards[maxRounds-self.roundsLeft], self.dealerButtonIndex)
             # round.newRound() TODO Replace line above when implemented
             self.playHand(round)
         
