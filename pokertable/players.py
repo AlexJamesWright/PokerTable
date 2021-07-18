@@ -2,6 +2,7 @@ class Player:
     
     name = 'BasePlayer'
     allIdens = []
+    id = None
     
     def __init__(self, stack: float, iden: int=None, kwargs: dict=None):
         self.stack = stack 

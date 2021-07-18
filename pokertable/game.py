@@ -1,25 +1,38 @@
+from pokertable.utils import nextPlayerIndex
 from pokertable.round import Round
 from pokertable.cards import Cards
 import numpy as np
 
 class Game:
     
-    def __init__(self, players: list):
-        self.players = players
-        self.nplayers = len(players)
-        self._dealerButtonIndexPositive = np.random.randint(self.nplayers)
+    def __init__(self, playersDict: dict):
+        self.playersDict = playersDict
+        self.__nplayers = len(self.playersDict)
+        self.dealerButtonIndex = np.random.randint(self.nplayers)
         
-    def _getDealerButtonIndex(self):
-        return self._dealerButtonIndexPositive
+    @property
+    def nplayers(self):
+        """
+        Players will drop out as they get busted, so need to return 
+        nplayers dynamically.
+        """
+        return len(self.playersDict)
+    
+    def anotherRound(self) -> bool:
+        """"
+        Should we play another round?
+        """
+        return self.nplayers > 1 and self.roundsLeft
         
-    def playAllHands(self, nrounds: int=100):
+    def playAllHands(self, maxRounds: int=100):
+        self.roundsLeft = maxRounds
+        
         # Get cards 
-        cards = Cards.setUpDecks(nrounds, self.nplayers)
-        for i in range(nrounds):
-            dealerButtonIndex = self._dealerButtonIndexPositive-self.nplayers
-            
+        cards = Cards.setUpDecks(maxRounds, self.nplayers)
+        
+        while self.anotherRound():
             # New round 
-            round = Round(self.players.copy(), cards[i], dealerButtonIndex)
+            round = Round(self.playersDict, cards[i], self.dealerButtonIndex)
             # round.newRound() TODO Replace line above when implemented
             self.playHand(round)
         
@@ -63,9 +76,14 @@ class Game:
         
     def _finalise(self, round):
         # Kick out players who have no stack...
-        # Are there more than two players? If yes, keep playing, otherwise end game
-        # Update dealer button 
-        self._dealerButtonIndexPositive = (self._dealerButtonIndexPositive+1)%self.nplayers
+        for pid, player in self.playersDict.items():
+            if player.stack < 0.01: del self.playersDict[pid]
+            
+            
+        # Move dealer button
+        self.dealerButtonIndex = nextPlayerIndex(self.dealerButtonIndex, self.nplayers)
+        
+        self.roundsLeft -= 1
         
     def summary(self, playerIdx):
         # Show player's hole cards, flop, turn and river cards, all players' stacks, and pot sizes

@@ -46,7 +46,7 @@ class TestRoundPostBlindAnte(unittest.TestCase):
     
     def test_smallBlindsFourPlayersNoAnteDealerNonZero(self):
         players = [Player(10), Player(10), Player(10), Player(10)]
-        round = Round(players, None, smallBlind=2)
+        round = Round(players, None, 2, smallBlind=2)
         round.postPlayersBlindAnte()
         self.assertEqual(players[0].stack, 6)
         self.assertEqual(players[1].stack, 10)

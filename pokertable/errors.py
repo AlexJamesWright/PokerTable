@@ -5,3 +5,7 @@ class PlayerIDError(Exception):
 class PlayerKindError(Exception):
     """Player kind not recognised"""
     pass
+
+class InvalidBetAmount(Exception):
+    """Invalid bet amount"""
+    pass

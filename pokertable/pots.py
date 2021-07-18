@@ -56,7 +56,7 @@ class Pots:
     
     def __len__(self):
         """
-        How many pots are there
+        How many pots are there?
         """
         return len(self.pots)
     
@@ -88,7 +88,7 @@ class Pots:
             self.playerBets = {id: amount for id, amount in self.playerBets.items() if self.playerDict[id].stack > prevAmount}
             self._addAmountsToPot(self.pots[-1], self.playerBets.keys(), amount-prevAmount)
             
-        # If only only player in any of the pots, the big stack has gone all in 
+        # If only one player in any of the pots, the big stack has gone all in 
         # and been called. Give the big stack the left over.
         if len(self.pots[-1]) == 1:
             player = list(self.pots[-1].playersDict.values())[0]
@@ -108,6 +108,11 @@ class Pots:
         for playerid in playerids:
             pot.betSize(amount, self.playerDict[playerid])
         
+    def stillBetting(self) -> bool:
+        """
+        Has everyone called, checked or folded?
+        """
+        raise NotImplementedError
         
     def __repr__(self):
         if self.finalised:
