@@ -31,8 +31,3 @@ jobs:
       run: |
         conda install pytest pytest-cov
         python -m pytest --cov=./pokertable --cov-report xml
-    - name: Coveralls
-          uses: AlexJamesWright/PokerTable@main
-          with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            path-to-lcov: coverage.xml
