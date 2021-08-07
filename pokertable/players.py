@@ -1,15 +1,20 @@
+from pokertable.enums import PlayerType
+
 class Player:
     
-    name = 'BasePlayer'
-    allIdens = []
+    kind = PlayerType.BASE
+    name = kind.value
     id = None
     
-    def __init__(self, stack: float, iden: int=None, kwargs: dict=None):
+    def __init__(self, stack: float, iden: int=None, **kwargs):
         self.stack = stack 
         self.id = iden
        
     def has(self, amount: float):
         return self.stack >= amount
+    
+    def getBet(self):
+        raise NotImplementedError
     
     def __repr__(self):
         return f"Player {self.id}: stack={self.stack}"

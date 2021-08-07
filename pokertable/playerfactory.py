@@ -1,17 +1,20 @@
-from pokertable.errors import PlayerKindError
+from pokertable.errors import PlayerTypeError
+from pokertable.enums import PlayerType
 from pokertable.players import Player
+
 
 class PlayerFactory:
     
     def __init__(self):
         self._playersMade = 0
     
-    def newPlayer(self, kind, stack, kwargs=None):
+    def newPlayer(self, kind=PlayerType.BASE, stack=10, **kwargs):
         # TODO this would be perfect for pattern matching with py310 comes out on conda
-        if kind == 'Base':
-            player = Player(stack, self._playersMade, **kwargs)
+        if kind == PlayerType.BASE:
+            player = Player(stack=stack, iden=self._playersMade, kwargs=kwargs)
         else:
-            raise PlayerKindError(f"Player kind {kind} not recognised")
+            raise PlayerTypeError(f"Player type {kind} not recognised")
+        
         
         self._playersMade += 1
         return player

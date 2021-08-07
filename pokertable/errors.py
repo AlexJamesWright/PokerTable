@@ -2,8 +2,8 @@ class PlayerIDError(Exception):
     """Player ID already in use"""
     pass
 
-class PlayerKindError(Exception):
-    """Player kind not recognised"""
+class PlayerTypeError(Exception):
+    """Player type not recognised"""
     pass
 
 class InvalidBetAmount(Exception):

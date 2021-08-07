@@ -1,100 +1,131 @@
+from pokertable.playerfactory import PlayerFactory
 from pokertable.players import Player
 from pokertable.round import Round
 import unittest
 
 class TestRoundPostBlindAnte(unittest.TestCase):
     
+    def setUp(self) -> None:
+        self.playerFactory = PlayerFactory()
+    
     def test_smallBlindsFourPlayersNoAnteDealerZero(self):
-        players = [Player(10), Player(10), Player(10), Player(10)]
-        round = Round(players, None)
+        players = [
+            self.playerFactory.newPlayer(stack=10),
+            self.playerFactory.newPlayer(stack=10), 
+            self.playerFactory.newPlayer(stack=10), 
+            self.playerFactory.newPlayer(stack=10)
+            ]
+        round = Round(players=players, cards=None)
         round.postPlayersBlindAnte()
-        self.assertEqual(players[0].stack, 10)
-        self.assertEqual(players[1].stack, 9)
-        self.assertEqual(players[2].stack, 8)
-        self.assertEqual(players[3].stack, 10)
+        self.assertEqual(round.pots.playerBets[0], 0)
+        self.assertEqual(round.pots.playerBets[1], 1)
+        self.assertEqual(round.pots.playerBets[2], 2)
+        self.assertEqual(round.pots.playerBets[3], 0)
         self.assertEqual(len(round.pots), 1)
-        self.assertEqual(round.pots[0].size, 3)
         
     def test_smallBlindsFourPlayersAnteDealerZero(self):
-        players = [Player(10), Player(10), Player(10), Player(10)]
-        round = Round(players, None, smallBlind=2, ante=1)
+        players = [
+            self.playerFactory.newPlayer(stack=10), 
+            self.playerFactory.newPlayer(stack=10), 
+            self.playerFactory.newPlayer(stack=10), 
+            self.playerFactory.newPlayer(stack=10)
+        ]
+        round = Round(players=players, cards=None, smallBlind=2, ante=1)
         round.postPlayersBlindAnte()
-        self.assertEqual(players[0].stack, 9)
-        self.assertEqual(players[1].stack, 7)
-        self.assertEqual(players[2].stack, 5)
-        self.assertEqual(players[3].stack, 9)
+        self.assertEqual(round.pots.playerBets[0], 1)
+        self.assertEqual(round.pots.playerBets[1], 3)
+        self.assertEqual(round.pots.playerBets[2], 5)
+        self.assertEqual(round.pots.playerBets[3], 1)
         self.assertEqual(len(round.pots), 1)
-        self.assertEqual(round.pots[0].size, 10)
         
     def test_smallBlindsTwoPlayersNoAnteDealerZero(self):
-        players = [Player(10), Player(10)]
-        round = Round(players, None, smallBlind=2)
+        players = [
+            self.playerFactory.newPlayer(stack=10), 
+            self.playerFactory.newPlayer(stack=10)
+        ]
+        round = Round(players=players, cards=None, smallBlind=2)
         round.postPlayersBlindAnte()
-        self.assertEqual(players[0].stack, 8)
-        self.assertEqual(players[1].stack, 6)
+        self.assertEqual(round.pots.playerBets[0], 2)
+        self.assertEqual(round.pots.playerBets[1], 4)
         self.assertEqual(len(round.pots), 1)
-        self.assertEqual(round.pots[0].size, 6)
         
     def test_smallBlindsTwoPlayersAnteDealerZero(self):
-        players = [Player(10), Player(10)]
-        round = Round(players, None, smallBlind=2, ante=1)
+        players = [
+            self.playerFactory.newPlayer(stack=10), 
+            self.playerFactory.newPlayer(stack=10)
+            ]
+        round = Round(players=players, cards=None, smallBlind=2, ante=1)
         round.postPlayersBlindAnte()
-        self.assertEqual(players[0].stack, 7)
-        self.assertEqual(players[1].stack, 5)
+        self.assertEqual(round.pots.playerBets[0], 3)
+        self.assertEqual(round.pots.playerBets[1], 5)
         self.assertEqual(len(round.pots), 1)
-        self.assertEqual(round.pots[0].size, 8)
     
     def test_smallBlindsFourPlayersNoAnteDealerNonZero(self):
-        players = [Player(10), Player(10), Player(10), Player(10)]
-        round = Round(players, None, 2, smallBlind=2)
+        players = [
+            self.playerFactory.newPlayer(stack=10), 
+            self.playerFactory.newPlayer(stack=10), 
+            self.playerFactory.newPlayer(stack=10), 
+            self.playerFactory.newPlayer(stack=10)
+            ]
+        round = Round(players=players, cards=None, dealerButtonIdx=2, smallBlind=2)
         round.postPlayersBlindAnte()
-        self.assertEqual(players[0].stack, 6)
-        self.assertEqual(players[1].stack, 10)
-        self.assertEqual(players[2].stack, 10)
-        self.assertEqual(players[3].stack, 8)
+        self.assertEqual(round.pots.playerBets[0], 4)
+        self.assertEqual(round.pots.playerBets[1], 0)
+        self.assertEqual(round.pots.playerBets[2], 0)
+        self.assertEqual(round.pots.playerBets[3], 2)
         self.assertEqual(len(round.pots), 1)
-        self.assertEqual(round.pots[0].size, 6)
         
     def test_smallBlindsFourPlayersAnteDealerNonZero(self):
-        players = [Player(10), Player(10), Player(10), Player(10)]
-        round = Round(players, None, 2, smallBlind=2, ante=1)
+        players = [
+            self.playerFactory.newPlayer(stack=10), 
+            self.playerFactory.newPlayer(stack=10), 
+            self.playerFactory.newPlayer(stack=10), 
+            self.playerFactory.newPlayer(stack=10)
+            ]
+        round = Round(players=players, cards=None, dealerButtonIdx=2, smallBlind=2, ante=1)
         round.postPlayersBlindAnte()
-        self.assertEqual(players[0].stack, 5)
-        self.assertEqual(players[1].stack, 9)
-        self.assertEqual(players[2].stack, 9)
-        self.assertEqual(players[3].stack, 7)
+        self.assertEqual(round.pots.playerBets[0], 5)
+        self.assertEqual(round.pots.playerBets[1], 1)
+        self.assertEqual(round.pots.playerBets[2], 1)
+        self.assertEqual(round.pots.playerBets[3], 3)
         self.assertEqual(len(round.pots), 1)
-        self.assertEqual(round.pots[0].size, 10)
         
     def test_smallBlindsTwoPlayersNoAnteDealerNonZero(self):
-        players = [Player(10), Player(10)]
-        round = Round(players, None, 1, smallBlind=2)
+        players = [
+            self.playerFactory.newPlayer(stack=10), 
+            self.playerFactory.newPlayer(stack=10)
+            ]
+        round = Round(players=players, cards=None, dealerButtonIdx=1, smallBlind=2)
         round.postPlayersBlindAnte()
-        self.assertEqual(players[0].stack, 6)
-        self.assertEqual(players[1].stack, 8)
+        self.assertEqual(round.pots.playerBets[0], 4)
+        self.assertEqual(round.pots.playerBets[1], 2)
         self.assertEqual(len(round.pots), 1)
-        self.assertEqual(round.pots[0].size, 8)
         
     def test_smallBlindsTwoPlayersAnteDealerNonZero(self):
-        players = [Player(10), Player(10)]
-        round = Round(players, None, 1, smallBlind=2, ante=1)
+        players = [
+            self.playerFactory.newPlayer(stack=10), 
+            self.playerFactory.newPlayer(stack=10)
+            ]
+        round = Round(players=players, cards=None, dealerButtonIdx=1, smallBlind=2, ante=1)
         round.postPlayersBlindAnte()
-        self.assertEqual(players[0].stack, 5)
-        self.assertEqual(players[1].stack, 7)
+        self.assertEqual(round.pots.playerBets[0], 5)
+        self.assertEqual(round.pots.playerBets[1], 3)
         self.assertEqual(len(round.pots), 1)
-        self.assertEqual(round.pots[0].size, 8)
         
     def test_smallBlindsFourPlayersShortStackedMultiplePots(self):
-        players = [Player(10), Player(100), Player(1), Player(10)]
-        round = Round(players, None, smallBlind=2)
+        players = [
+            self.playerFactory.newPlayer(stack=10), 
+            self.playerFactory.newPlayer(stack=100), 
+            self.playerFactory.newPlayer(stack=1), 
+            self.playerFactory.newPlayer(stack=10)
+            ]
+        round = Round(players=players, cards=None, smallBlind=2)
         round.postPlayersBlindAnte()
-        self.assertEqual(players[0].stack, 98)
-        self.assertEqual(players[0].stack, 0)
-        self.assertEqual(players[0].stack, 10)
-        self.assertEqual(players[0].stack, 10)
-        self.assertEqual(len(round.pots), 2)
-        self.assertEqual(round.pots[0].size, 2)
-        self.assertEqual(round.pots[1].size, 1)
+        self.assertEqual(round.pots.playerBets[0], 0)
+        self.assertEqual(round.pots.playerBets[1], 2)
+        self.assertEqual(round.pots.playerBets[2], 1)
+        self.assertEqual(round.pots.playerBets[3], 0)
+        # self.assertEqual(len(round.pots), 2)
     
     
 class TestRoundFinishedBettering(unittest.TestCase):

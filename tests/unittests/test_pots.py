@@ -106,6 +106,6 @@ class TestPots(unittest.TestCase):
         self.assertEqual(list(pots[2].playersDict.keys()), [2, 3])
         
         
-    
+
 if __name__ == '__main__':
     unittest.main()

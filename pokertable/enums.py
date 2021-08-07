@@ -6,3 +6,7 @@ class Action(Enum):
     RAISED = 'RAISED'
     FOLDED = 'FOLDED'
     CHECKED = 'CHECKED'
+    
+    
+class PlayerType(Enum):
+    BASE = 'BasePlayer'

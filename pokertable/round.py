@@ -11,15 +11,19 @@ class Round:
     """
     def __init__(self, players, cards, dealerButtonIdx=0, smallBlind=1, bigBlind=None, ante=0):
         self.players: list[Player] = players
-        self.nplayers = len(self.players)
+        self._nplayers = len(self.players)
         self.dealerButtonIdx = dealerButtonIdx
         self.smallBlind = smallBlind 
         self.bigBlind = bigBlind or 2*smallBlind
         self.maxBet = self.bigBlind
         self.ante = ante
-        self.actionIndex = nextPlayerIndex(self.dealerButtonIdx, self.nplayers)
+        self.actionIndex = None
         dealerButtonIdx+1
         self.pots = Pots()
+        
+    @property 
+    def nplayers(self):
+        return len(self.players)
         
     def newRound(self):
         # TODO Might be more efficient to reset some variables, rather than 
@@ -35,23 +39,36 @@ class Round:
     
         
     def postPlayersBlindAnte(self):
+        # Starting new round
+        self._startNewRound()
         self._postAntes()
         self._postSmallBlind()
         self._postBigBlind()
         
     def _postSmallBlind(self):
-        self.pots.betSize(self.bigBlind, self.players[self.actionIndex])
+        self.pots.betSize(self.smallBlind+self.ante, self.players[self.actionIndex])
         self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
     
     def _postBigBlind(self):
-        self.pots.betSize(self.bigBlind, self.players[self.actionIndex])
+        self.pots.betSize(self.bigBlind+self.ante, self.players[self.actionIndex])
         self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
     
     def _postAntes(self):
         for player in self.players:
             self.pots.betSize(self.ante, player)
             
+    def _startNewRound(self):
+        # For a new round, we need to set the action index 
+        if self.nplayers > 2:
+            self.actionIndex = nextPlayerIndex(self.dealerButtonIdx, self.nplayers)
+        elif self.nplayers == 2:
+            self.actionIndex = self.dealerButtonIdx
+        else:
+            raise RuntimeError(f'Not enough players to start new round: {self.players}')
+        
+            
     def bettingRound(self):
+        self.actionIndex = nextPlayerIndex(self.dealerButtonIdx, self.nplayers)
         while self.pots.stillBetting():
             self.getPlayerBet(self)
             self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
