@@ -1,4 +1,4 @@
-![example workflow](https://github.com/AlexJamesWright/PokerTable/actions/workflows/python-package-conda.yml/badge.svg)
+![example workflow](https://github.com/AlexJamesWright/PokerTable/actions/workflows/main.yml/badge.svg)
 
 # PokerTable
 
