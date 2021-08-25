@@ -49,9 +49,10 @@ class Game:
         self._settleHand(round)
         self._finalise(round)
         
-    @classmethod
-    def _distributeCards(cls, round):
-        pass 
+    def _distributeCards(self, round):
+        holdCards = {}
+        for id, player in self.playersDict.items():
+            
     
     @classmethod
     def _preflopBetting(cls, round):

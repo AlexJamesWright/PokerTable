@@ -9,6 +9,7 @@ class Player:
     def __init__(self, stack: float, iden: int=None, **kwargs):
         self.stack = stack 
         self.id = iden
+        self.holdCards = None
        
     def has(self, amount: float):
         return self.stack >= amount
@@ -18,3 +19,8 @@ class Player:
     
     def __repr__(self):
         return f"Player {self.id}: stack={self.stack}"
+
+
+class Caller(Player):
+    
+    def getBet(self):

@@ -125,12 +125,23 @@ class TestRoundPostBlindAnte(unittest.TestCase):
         self.assertEqual(round.pots.playerBets[1], 2)
         self.assertEqual(round.pots.playerBets[2], 1)
         self.assertEqual(round.pots.playerBets[3], 0)
-        # self.assertEqual(len(round.pots), 2)
     
     
-class TestRoundFinishedBettering(unittest.TestCase):
-    pass
-
+# class TestRoundFinishedBettering(unittest.TestCase):
+    
+#     def setUp(self) -> None:
+#         self.playerFactory = PlayerFactory()
+    
+#     def test_preFlopBettingSimple(self):
+#         players = [
+#             self.playerFactory.newPlayer(stack=10),
+#             self.playerFactory.newPlayer(stack=10), 
+#             self.playerFactory.newPlayer(stack=10), 
+#             self.playerFactory.newPlayer(stack=10)
+#             ]
+#         round = Round(players=players, cards=None)
+#         round.postPlayersBlindAnte()
+#         round.
 
 
 if __name__ == '__main__':

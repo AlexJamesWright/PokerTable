@@ -11,11 +11,4 @@ class Cards:
         [np.random.shuffle(allDecks[i]) for i in range(nrounds)]
         return allDecks[:, :(2*nplayers+5)]
     
-class Hole:
     
-    def __init__(self, card1, card2):
-        self.card1 = card1
-        self.card2 = card2 
-        self.stake = 0
-        self.folded = False
-        self.allIn = False
