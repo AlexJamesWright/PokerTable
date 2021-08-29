@@ -52,7 +52,7 @@ class Game:
     def _distributeCards(self, round):
         holdCards = {}
         for id, player in self.playersDict.items():
-            
+            pass
     
     @classmethod
     def _preflopBetting(cls, round):

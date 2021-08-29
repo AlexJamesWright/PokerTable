@@ -24,3 +24,4 @@ class Player:
 class Caller(Player):
     
     def getBet(self):
+        pass
