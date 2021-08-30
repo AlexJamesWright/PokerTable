@@ -15,7 +15,7 @@ class TestRoundPostBlindAnte(unittest.TestCase):
             self.playerFactory.newPlayer(stack=10), 
             self.playerFactory.newPlayer(stack=10)
             ]
-        round = Round(players=players, cards=None)
+        round = Round(players=players)
         round.postPlayersBlindAnte()
         self.assertEqual(round.pots.playerBets[0], 0)
         self.assertEqual(round.pots.playerBets[1], 1)
@@ -32,7 +32,7 @@ class TestRoundPostBlindAnte(unittest.TestCase):
             self.playerFactory.newPlayer(stack=10), 
             self.playerFactory.newPlayer(stack=10)
         ]
-        round = Round(players=players, cards=None, smallBlind=2, ante=1)
+        round = Round(players=players, smallBlind=2, ante=1)
         round.postPlayersBlindAnte()
         self.assertEqual(round.pots.playerBets[0], 1)
         self.assertEqual(round.pots.playerBets[1], 3)
@@ -47,7 +47,7 @@ class TestRoundPostBlindAnte(unittest.TestCase):
             self.playerFactory.newPlayer(stack=10), 
             self.playerFactory.newPlayer(stack=10)
         ]
-        round = Round(players=players, cards=None, smallBlind=2)
+        round = Round(players=players, smallBlind=2)
         round.postPlayersBlindAnte()
         self.assertEqual(round.pots.playerBets[0], 2)
         self.assertEqual(round.pots.playerBets[1], 4)
@@ -60,7 +60,7 @@ class TestRoundPostBlindAnte(unittest.TestCase):
             self.playerFactory.newPlayer(stack=10), 
             self.playerFactory.newPlayer(stack=10)
             ]
-        round = Round(players=players, cards=None, smallBlind=2, ante=1)
+        round = Round(players=players, smallBlind=2, ante=1)
         round.postPlayersBlindAnte()
         self.assertEqual(round.pots.playerBets[0], 3)
         self.assertEqual(round.pots.playerBets[1], 5)
@@ -75,7 +75,7 @@ class TestRoundPostBlindAnte(unittest.TestCase):
             self.playerFactory.newPlayer(stack=10), 
             self.playerFactory.newPlayer(stack=10)
             ]
-        round = Round(players=players, cards=None, dealerButtonIdx=2, smallBlind=2)
+        round = Round(players=players, dealerButtonIdx=2, smallBlind=2)
         round.postPlayersBlindAnte()
         self.assertEqual(round.pots.playerBets[0], 4)
         self.assertEqual(round.pots.playerBets[1], 0)
@@ -92,7 +92,7 @@ class TestRoundPostBlindAnte(unittest.TestCase):
             self.playerFactory.newPlayer(stack=10), 
             self.playerFactory.newPlayer(stack=10)
             ]
-        round = Round(players=players, cards=None, dealerButtonIdx=2, smallBlind=2, ante=1)
+        round = Round(players=players, dealerButtonIdx=2, smallBlind=2, ante=1)
         round.postPlayersBlindAnte()
         self.assertEqual(round.pots.playerBets[0], 5)
         self.assertEqual(round.pots.playerBets[1], 1)
@@ -107,7 +107,7 @@ class TestRoundPostBlindAnte(unittest.TestCase):
             self.playerFactory.newPlayer(stack=10), 
             self.playerFactory.newPlayer(stack=10)
             ]
-        round = Round(players=players, cards=None, dealerButtonIdx=1, smallBlind=2)
+        round = Round(players=players, dealerButtonIdx=1, smallBlind=2)
         round.postPlayersBlindAnte()
         self.assertEqual(round.pots.playerBets[0], 4)
         self.assertEqual(round.pots.playerBets[1], 2)
@@ -120,7 +120,7 @@ class TestRoundPostBlindAnte(unittest.TestCase):
             self.playerFactory.newPlayer(stack=10), 
             self.playerFactory.newPlayer(stack=10)
             ]
-        round = Round(players=players, cards=None, dealerButtonIdx=1, smallBlind=2, ante=1)
+        round = Round(players=players, dealerButtonIdx=1, smallBlind=2, ante=1)
         round.postPlayersBlindAnte()
         self.assertEqual(round.pots.playerBets[0], 5)
         self.assertEqual(round.pots.playerBets[1], 3)
@@ -135,7 +135,7 @@ class TestRoundPostBlindAnte(unittest.TestCase):
             self.playerFactory.newPlayer(stack=1), 
             self.playerFactory.newPlayer(stack=10)
             ]
-        round = Round(players=players, cards=None, smallBlind=2)
+        round = Round(players=players, smallBlind=2)
         round.postPlayersBlindAnte()
         self.assertEqual(round.pots.playerBets[0], 0)
         self.assertEqual(round.pots.playerBets[1], 2)
@@ -157,7 +157,7 @@ class TestRoundPostBlindAnte(unittest.TestCase):
 #             self.playerFactory.newPlayer(stack=10), 
 #             self.playerFactory.newPlayer(stack=10)
 #             ]
-#         round = Round(players=players, cards=None)
+#         round = Round(players=players)
 #         round.postPlayersBlindAnte()
 #         round.
 
