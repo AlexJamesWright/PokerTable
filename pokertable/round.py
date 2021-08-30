@@ -18,6 +18,7 @@ class Round:
         self.ante = ante
         self.actionIndex = None
         self.pots = Pots()
+        self.boardCards = [None, None, None, None, None]
         
     @property 
     def nplayers(self):
@@ -108,5 +109,7 @@ class Round:
         return False
 
     def printBettingInfo(self, player):
+        print('\n\n')
         print(self.pots)
+        print(f"\nBoard = {self.boardCards}")
         print(player)

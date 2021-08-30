@@ -29,7 +29,7 @@ class Player:
         return self.kind.value
     
     def __repr__(self):
-        return f"Player {self.id}:\n\tstack={self.stack}\n\thole cards=[{self.__holeCards[0]}, {self.__holeCards[1]}]"
+        return f"Player {self.id}:\n\tstack = {self.stack}\n\thole cards = {self.__holeCards}"
 
 class User(Player):
 

@@ -8,7 +8,7 @@ class Game:
     def __init__(self, playersList: dict):
         self.playersList = playersList
         self.__nplayers = len(self.playersList)
-        self.dealerButtonIndex = np.random.randint(self.nplayers)
+        self.dealerButtonIndex = 0#np.random.randint(self.nplayers)
         
     @property
     def nplayers(self):
@@ -39,13 +39,13 @@ class Game:
             # round.newRound() TODO Replace line above when implemented
             self.playHand(round)
 
-        input('Press enter to finish...')
         
     def playHand(self, round):
         round.postPlayersBlindAnte()
         self._distributeHoleCards()
         round.bettingRound() 
         self._flop(round)
+        print("The next round of betting doesnt work as Round thinks all betting has finished!")
         round.bettingRound()
         self._turn(round)
         round.bettingRound() 
@@ -60,17 +60,15 @@ class Game:
         for i, player in enumerate(self.playersList):
             player.setCard(self.roundCards[i+self.nplayers])
     
-    @classmethod
-    def _flop(cls, round):
-        pass 
+
+    def _flop(self, round):
+        round.boardCards[:3] = self.roundCards[-5:-2]
+
+    def _turn(self, round):
+        round.boardCards[3] = self.roundCards[-2]
     
-    @classmethod
-    def _turn(cls, round):
-        pass 
-    
-    @classmethod
-    def _river(cls, round):
-        pass 
+    def _river(self, round):
+        round.boardCards[4] = self.roundCards[-1]
     
     @ classmethod
     def _settleHand(cls, round):
