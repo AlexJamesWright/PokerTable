@@ -18,7 +18,6 @@ class Round:
         self.maxBet = self.bigBlind
         self.ante = ante
         self.actionIndex = None
-        dealerButtonIdx+1
         self.pots = Pots()
         
     @property 
@@ -44,18 +43,6 @@ class Round:
         self._postAntes()
         self._postSmallBlind()
         self._postBigBlind()
-        
-    def _postSmallBlind(self):
-        self.pots.betSize(self.smallBlind+self.ante, self.players[self.actionIndex])
-        self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
-    
-    def _postBigBlind(self):
-        self.pots.betSize(self.bigBlind+self.ante, self.players[self.actionIndex])
-        self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
-    
-    def _postAntes(self):
-        for player in self.players:
-            self.pots.betSize(self.ante, player)
             
     def _startNewRound(self):
         # For a new round, we need to set the action index 
@@ -66,25 +53,43 @@ class Round:
         else:
             raise RuntimeError(f'Not enough players to start new round: {self.players}')
         
+    def _postAntes(self):
+        for player in self.players:
+            self.pots.betSize(self.ante, player)
+
+    def _postSmallBlind(self):
+        self.pots.betSize(self.smallBlind+self.ante, self.players[self.actionIndex])
+        self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
+    
+    def _postBigBlind(self):
+        self.pots.betSize(self.bigBlind+self.ante, self.players[self.actionIndex])
+        self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
             
     def bettingRound(self):
-        self.actionIndex = nextPlayerIndex(self.dealerButtonIdx, self.nplayers)
-        while self.pots.stillBetting():
+        while self._stillBetting():
             self.getPlayerBet(self)
             self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
         # End of betting round, reset maxBet for next betting round
         self.maxBet = self.bigBlind
+        self.actionIndex = nextPlayerIndex(self.dealerButtonIdx, self.nplayers)
+        
+    def _stillBetting(self) -> bool:
+        """
+        Has everyone called, checked or folded?
+        """
+        raise NotImplementedError
         
     def getPlayerBet(self, player):
         valid = False 
         while not valid:
             amount = self.players[self.actionIndex].getBet()
             valid = self.checkValidAmount(amount)
-        self.pots.betSize(amount, self.players[[self.actionIndex]])
+        self.pots.betSize(amount, self.players[self.actionIndex])
             
     def checkValidAmount(self, amount):
         if (amount==self.maxBet) or (amount >= 2*self.maxBet):
             # if call/check or raise
             self.maxBet = amount
             return True
+        print(f"Invalid bet size of {amount}")
         return False

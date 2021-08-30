@@ -3,7 +3,6 @@ from pokertable.enums import PlayerType
 class Player:
     
     kind = PlayerType.BASE
-    name = kind.value
     id = None
     
     def __init__(self, stack: float, iden: int=None, **kwargs):
@@ -16,10 +15,20 @@ class Player:
     
     def getBet(self):
         raise NotImplementedError
+
+    @property
+    def name(self):
+        return self.kind.value
     
     def __repr__(self):
         return f"Player {self.id}: stack={self.stack}"
 
+class User(Player):
+
+    kind = PlayerType.USER
+
+    def getBet(self):
+        return input("Enter betsize: ")
 
 class Caller(Player):
     

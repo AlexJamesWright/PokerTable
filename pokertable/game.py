@@ -5,9 +5,9 @@ import numpy as np
 
 class Game:
     
-    def __init__(self, playersDict: dict):
-        self.playersDict = playersDict
-        self.__nplayers = len(self.playersDict)
+    def __init__(self, playersList: dict):
+        self.playersList = playersList
+        self.__nplayers = len(self.playersList)
         self.dealerButtonIndex = np.random.randint(self.nplayers)
         
     @property
@@ -16,7 +16,7 @@ class Game:
         Players will drop out as they get busted, so need to return 
         nplayers dynamically.
         """
-        return len(self.playersDict)
+        return len(self.playersList)
     
     def anotherRound(self) -> bool:
         """"
@@ -32,26 +32,26 @@ class Game:
         
         while self.anotherRound():
             # New round 
-            round = Round(self.playersDict, cards[maxRounds-self.roundsLeft], self.dealerButtonIndex)
+            round = Round(self.playersList, cards[maxRounds-self.roundsLeft], self.dealerButtonIndex)
             # round.newRound() TODO Replace line above when implemented
             self.playHand(round)
         
     def playHand(self, round):
         round.postPlayersBlindAnte()
         self._distributeCards(round)
-        round.preflopBetting(round) 
+        round.bettingRound() 
         self._flop(round)
-        round.bettingRound(round)
+        round.bettingRound()
         self._turn(round)
-        round.bettingRound(round) 
+        round.bettingRound() 
         self._river(round)
-        round.bettingRound(round)
+        round.bettingRound()
         self._settleHand(round)
         self._finalise(round)
         
     def _distributeCards(self, round):
-        holdCards = {}
-        for id, player in self.playersDict.items():
+        holeCards = {}
+        for player in self.playersList:
             pass
     
     @classmethod
@@ -77,8 +77,8 @@ class Game:
         
     def _finalise(self, round):
         # Kick out players who have no stack...
-        for pid, player in self.playersDict.items():
-            if player.stack < 0.01: del self.playersDict[pid]
+        for player in self.playersList:
+            if player.stack < 0.01: del player
             
             
         # Move dealer button

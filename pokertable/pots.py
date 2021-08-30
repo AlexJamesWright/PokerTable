@@ -108,12 +108,6 @@ class Pots:
         for playerid in playerids:
             pot.betSize(amount, self.playerDict[playerid])
         
-    def stillBetting(self) -> bool:
-        """
-        Has everyone called, checked or folded?
-        """
-        raise NotImplementedError
-        
     def __repr__(self):
         if self.finalised:
             s = ''

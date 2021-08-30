@@ -21,6 +21,8 @@ class TestRoundPostBlindAnte(unittest.TestCase):
         self.assertEqual(round.pots.playerBets[1], 1)
         self.assertEqual(round.pots.playerBets[2], 2)
         self.assertEqual(round.pots.playerBets[3], 0)
+        self.assertEqual(round.actionIndex, -1)
+        self.assertEqual(round.dealerButtonIdx, 0)
         self.assertEqual(len(round.pots), 1)
         
     def test_smallBlindsFourPlayersAnteDealerZero(self):
@@ -36,6 +38,8 @@ class TestRoundPostBlindAnte(unittest.TestCase):
         self.assertEqual(round.pots.playerBets[1], 3)
         self.assertEqual(round.pots.playerBets[2], 5)
         self.assertEqual(round.pots.playerBets[3], 1)
+        self.assertEqual(round.actionIndex, -1)
+        self.assertEqual(round.dealerButtonIdx, 0)
         self.assertEqual(len(round.pots), 1)
         
     def test_smallBlindsTwoPlayersNoAnteDealerZero(self):
@@ -47,6 +51,8 @@ class TestRoundPostBlindAnte(unittest.TestCase):
         round.postPlayersBlindAnte()
         self.assertEqual(round.pots.playerBets[0], 2)
         self.assertEqual(round.pots.playerBets[1], 4)
+        self.assertEqual(round.actionIndex, 0)
+        self.assertEqual(round.dealerButtonIdx, 0)
         self.assertEqual(len(round.pots), 1)
         
     def test_smallBlindsTwoPlayersAnteDealerZero(self):
@@ -58,6 +64,8 @@ class TestRoundPostBlindAnte(unittest.TestCase):
         round.postPlayersBlindAnte()
         self.assertEqual(round.pots.playerBets[0], 3)
         self.assertEqual(round.pots.playerBets[1], 5)
+        self.assertEqual(round.actionIndex, 0)
+        self.assertEqual(round.dealerButtonIdx, 0)
         self.assertEqual(len(round.pots), 1)
     
     def test_smallBlindsFourPlayersNoAnteDealerNonZero(self):
@@ -73,6 +81,8 @@ class TestRoundPostBlindAnte(unittest.TestCase):
         self.assertEqual(round.pots.playerBets[1], 0)
         self.assertEqual(round.pots.playerBets[2], 0)
         self.assertEqual(round.pots.playerBets[3], 2)
+        self.assertEqual(round.actionIndex, -3)
+        self.assertEqual(round.dealerButtonIdx, 2)
         self.assertEqual(len(round.pots), 1)
         
     def test_smallBlindsFourPlayersAnteDealerNonZero(self):
@@ -88,6 +98,8 @@ class TestRoundPostBlindAnte(unittest.TestCase):
         self.assertEqual(round.pots.playerBets[1], 1)
         self.assertEqual(round.pots.playerBets[2], 1)
         self.assertEqual(round.pots.playerBets[3], 3)
+        self.assertEqual(round.actionIndex, -3)
+        self.assertEqual(round.dealerButtonIdx, 2)
         self.assertEqual(len(round.pots), 1)
         
     def test_smallBlindsTwoPlayersNoAnteDealerNonZero(self):
@@ -99,6 +111,8 @@ class TestRoundPostBlindAnte(unittest.TestCase):
         round.postPlayersBlindAnte()
         self.assertEqual(round.pots.playerBets[0], 4)
         self.assertEqual(round.pots.playerBets[1], 2)
+        self.assertEqual(round.actionIndex, -1)
+        self.assertEqual(round.dealerButtonIdx, 1)
         self.assertEqual(len(round.pots), 1)
         
     def test_smallBlindsTwoPlayersAnteDealerNonZero(self):
@@ -110,6 +124,8 @@ class TestRoundPostBlindAnte(unittest.TestCase):
         round.postPlayersBlindAnte()
         self.assertEqual(round.pots.playerBets[0], 5)
         self.assertEqual(round.pots.playerBets[1], 3)
+        self.assertEqual(round.actionIndex, -1)
+        self.assertEqual(round.dealerButtonIdx, 1)
         self.assertEqual(len(round.pots), 1)
         
     def test_smallBlindsFourPlayersShortStackedMultiplePots(self):
@@ -125,6 +141,8 @@ class TestRoundPostBlindAnte(unittest.TestCase):
         self.assertEqual(round.pots.playerBets[1], 2)
         self.assertEqual(round.pots.playerBets[2], 1)
         self.assertEqual(round.pots.playerBets[3], 0)
+        self.assertEqual(round.actionIndex, -1)
+        self.assertEqual(round.dealerButtonIdx, 0)
     
     
 # class TestRoundFinishedBettering(unittest.TestCase):
