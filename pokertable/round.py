@@ -1,15 +1,14 @@
-from pokertable.errors import InvalidBetAmount
 from pokertable.utils import nextPlayerIndex
 from pokertable.players import Player
-from pokertable.enums import Action
 from pokertable.pots import Pots
+import numpy as np
 
 class Round:
     """
-    Container for all things related to a single round. Contains the players, cards,
+    Container for all things related to a single round. Contains the players,
     pots, and utility methods. This class handles betting.
     """
-    def __init__(self, players, cards, dealerButtonIdx=0, smallBlind=1, bigBlind=None, ante=0):
+    def __init__(self, players, dealerButtonIdx=0, smallBlind=1, bigBlind=None, ante=0):
         self.players: list[Player] = players
         self._nplayers = len(self.players)
         self.dealerButtonIdx = dealerButtonIdx
@@ -66,20 +65,31 @@ class Round:
         self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
             
     def bettingRound(self):
+        self.lastRaise = self.bigBlind
         while self._stillBetting():
-            self.getPlayerBet(self)
+            self.getPlayerBet(self.players[self.actionIndex])
             self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
         # End of betting round, reset maxBet for next betting round
         self.maxBet = self.bigBlind
         self.actionIndex = nextPlayerIndex(self.dealerButtonIdx, self.nplayers)
         
+    def _finishedBetting(self) -> bool:
+        """
+        Has everyone called, checked or folded?
+        """
+        if self.nplayers == self.pots.nbettors:
+            return np.all(np.array(list(self.pots.playerBets.values()))==self.pots.currentBetSize)
+        return False
+
+
     def _stillBetting(self) -> bool:
         """
         Has everyone called, checked or folded?
         """
-        raise NotImplementedError
+        return not self._finishedBetting()
         
     def getPlayerBet(self, player):
+        self.printBettingInfo(player)
         valid = False 
         while not valid:
             amount = self.players[self.actionIndex].getBet()
@@ -87,9 +97,16 @@ class Round:
         self.pots.betSize(amount, self.players[self.actionIndex])
             
     def checkValidAmount(self, amount):
-        if (amount==self.maxBet) or (amount >= 2*self.maxBet):
+        raiseSize = amount - self.maxBet
+        if raiseSize==0 or raiseSize>=self.lastRaise:
             # if call/check or raise
+            if amount > self.maxBet: 
+                self.lastRaise = raiseSize
             self.maxBet = amount
             return True
-        print(f"Invalid bet size of {amount}")
+        print(f"Invalid bet size of {amount}. Call/check is {self.maxBet}; min raise is {self.pots.currentBetSize+self.lastRaise}")
         return False
+
+    def printBettingInfo(self, player):
+        print(self.pots)
+        print(player)

@@ -30,15 +30,20 @@ class Game:
         # Get cards 
         cards = Cards.setUpDecks(maxRounds, self.nplayers)
         
+
         while self.anotherRound():
+            # Get cards for this round
+            self.roundCards = cards[maxRounds-self.roundsLeft]
             # New round 
-            round = Round(self.playersList, cards[maxRounds-self.roundsLeft], self.dealerButtonIndex)
+            round = Round(self.playersList, self.dealerButtonIndex)
             # round.newRound() TODO Replace line above when implemented
             self.playHand(round)
+
+        input('Press enter to finish...')
         
     def playHand(self, round):
         round.postPlayersBlindAnte()
-        self._distributeCards(round)
+        self._distributeHoleCards()
         round.bettingRound() 
         self._flop(round)
         round.bettingRound()
@@ -49,14 +54,11 @@ class Game:
         self._settleHand(round)
         self._finalise(round)
         
-    def _distributeCards(self, round):
-        holeCards = {}
-        for player in self.playersList:
-            pass
-    
-    @classmethod
-    def _preflopBetting(cls, round):
-        pass 
+    def _distributeHoleCards(self):
+        for i, player in enumerate(self.playersList):
+            player.setCard(self.roundCards[i])
+        for i, player in enumerate(self.playersList):
+            player.setCard(self.roundCards[i+self.nplayers])
     
     @classmethod
     def _flop(cls, round):
@@ -79,7 +81,6 @@ class Game:
         # Kick out players who have no stack...
         for player in self.playersList:
             if player.stack < 0.01: del player
-            
             
         # Move dealer button
         self.dealerButtonIndex = nextPlayerIndex(self.dealerButtonIndex, self.nplayers)

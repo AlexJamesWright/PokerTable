@@ -1,3 +1,5 @@
+import numpy as np
+
 class Pot:
     """
     A single pot of money. All players must have the same amount of chips
@@ -59,6 +61,14 @@ class Pots:
         How many pots are there?
         """
         return len(self.pots)
+
+    @property
+    def nbettors(self):
+        return len(self.playerBets)
+
+    @property 
+    def currentBetSize(self):
+        return np.max(list(self.playerBets.values()))
     
     def betSize(self, amount, player):
         """
