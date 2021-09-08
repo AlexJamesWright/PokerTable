@@ -1,6 +1,7 @@
 from pokertable.enums import PlayerType
+from abc import ABC, abstractmethod
 
-class Player:
+class Player(ABC):
     
     kind = PlayerType.BASE
     id = None
@@ -9,6 +10,7 @@ class Player:
         self.stack = stack 
         self.id = iden
         self.__holeCards = [None, None]
+        self.folded = False
 
     def setCard(self, card):
         if not self.__holeCards[0]:
@@ -22,6 +24,12 @@ class Player:
         return self.stack >= amount
     
     def getBet(self):
+        bet = self._getBet()
+        self.folded = (bet < 1e-10)
+        return bet
+
+    @abstractmethod 
+    def _getBet(self):
         raise NotImplementedError
 
     @property
@@ -31,14 +39,16 @@ class Player:
     def __repr__(self):
         return f"Player {self.id}:\n\tstack = {self.stack}\n\thole cards = {self.__holeCards}"
 
+
+
 class User(Player):
 
     kind = PlayerType.USER
 
-    def getBet(self):
+    def _getBet(self):
         return int(input("Enter betsize: "))
 
 class Caller(Player):
     
-    def getBet(self):
+    def _getBet(self):
         pass

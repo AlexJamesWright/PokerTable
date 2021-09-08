@@ -47,10 +47,10 @@ class Pots:
     Pot container, potentially holding multiple concurrent pots.
     """
     
-    def __init__(self):
+    def __init__(self, players):
         self.pots = [Pot()]
-        self.playerBets = {}
-        self.playerDict = {}
+        self.playerBets = {player.id: 0 for player in players}
+        self.playerDict = {player.id: player for player in players}
         self.finalised = False
         
     def __getitem__(self, p):
@@ -74,12 +74,12 @@ class Pots:
         """
         Current size of bet to stay in hand, can be call, check, raise or all-in. 
         """
-        if player.id not in self.playerDict: self.playerDict[player.id] = player
-        if player.has(amount):
-            self.playerBets[player.id] = amount
-        else:
-            self.playerBets[player.id] = player.stack
-        self.finalised = False
+        if amount > 1e-10:
+            if player.has(amount):
+                self.playerBets[player.id] = amount
+            else:
+                self.playerBets[player.id] = player.stack
+            self.finalised = False
          
     def finalise(self):
         """

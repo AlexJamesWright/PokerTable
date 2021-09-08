@@ -17,7 +17,7 @@ class Round:
         self.maxBet = self.bigBlind
         self.ante = ante
         self.actionIndex = None
-        self.pots = Pots()
+        self.pots = Pots(self.players)
         self.boardCards = [None, None, None, None, None]
         
     @property 
@@ -30,6 +30,7 @@ class Round:
         # Would need to:
         #   - drop bust players here
         #   - reset largest bet size
+        #   - new Pots() for self.pots
         pass 
     
     
@@ -68,7 +69,7 @@ class Round:
     def bettingRound(self):
         self.lastRaise = self.bigBlind
         while self._stillBetting():
-            self.getPlayerBet(self.players[self.actionIndex])
+            if not self.players[self.actionIndex].folded: self.getPlayerBet(self.players[self.actionIndex])
             self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
         # End of betting round, reset maxBet for next betting round
         self.maxBet = self.bigBlind
@@ -78,9 +79,7 @@ class Round:
         """
         Has everyone called, checked or folded?
         """
-        if self.nplayers == self.pots.nbettors:
-            return np.all(np.array(list(self.pots.playerBets.values()))==self.pots.currentBetSize)
-        return False
+        return bool(np.prod([player.folded or self.pots.playerBets[player.id] == self.pots.currentBetSize for player in self.players]))
 
 
     def _stillBetting(self) -> bool:
@@ -99,13 +98,13 @@ class Round:
             
     def checkValidAmount(self, amount):
         raiseSize = amount - self.maxBet
-        if raiseSize==0 or raiseSize>=self.lastRaise:
+        if amount==0 or raiseSize==0 or raiseSize>=self.lastRaise:
             # if call/check or raise
             if amount > self.maxBet: 
                 self.lastRaise = raiseSize
             self.maxBet = amount
             return True
-        print(f"Invalid bet size of {amount}. Call/check is {self.maxBet}; min raise is {self.pots.currentBetSize+self.lastRaise}")
+        print(f"Invalid bet size of {amount}. Fold is 0; Call/check is {self.maxBet}; min raise is {self.pots.currentBetSize+self.lastRaise}")
         return False
 
     def printBettingInfo(self, player):
