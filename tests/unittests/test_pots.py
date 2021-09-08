@@ -12,7 +12,7 @@ class TestPots(unittest.TestCase):
             del p
     
     def test_potsBetSize(self):
-        pots = Pots()
+        pots = Pots(self.players)
         for player in self.players:
             pots.betSize(1, player)
         pots.finalise()
@@ -21,7 +21,7 @@ class TestPots(unittest.TestCase):
         
     def test_p2RaisesP1allIn(self):
         self.players = [Player(10, 0), Player(30, 1)]
-        pots = Pots()
+        pots = Pots(self.players)
         
         # P1 bets 5
         pots.betSize(5, self.players[0])
@@ -40,7 +40,7 @@ class TestPots(unittest.TestCase):
 
     def test_firstPlayerAllIn(self):
         # Need to check that pots makes sense when players dont have enough
-        pots = Pots()
+        pots = Pots(self.players)
         
         for player in self.players:
             pots.betSize(10, player)
@@ -61,7 +61,7 @@ class TestPots(unittest.TestCase):
         self.assertEqual(self.players[3].stack, 980)
             
     def test_secondPlayerAllIn(self):
-        pots = Pots()
+        pots = Pots(self.players)
         
         pots.betSize(5, self.players[0])
         for player in self.players[-3:]:
@@ -81,7 +81,7 @@ class TestPots(unittest.TestCase):
         self.assertEqual(list(pots[1].playersDict.keys()), [1, 2, 3])
     
     def test_sharkAllIn(self):
-        pots = Pots()
+        pots = Pots(self.players)
         
         pots.betSize(5, self.players[0])
         pots.betSize(15, self.players[1])
