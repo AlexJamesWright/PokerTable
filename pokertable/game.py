@@ -60,15 +60,20 @@ class Game:
         for i, player in enumerate(self.playersList):
             player.setCard(self.roundCards[i+self.nplayers])
     
-
     def _flop(self, round):
         round.boardCards[:3] = self.roundCards[-5:-2]
+        round.resetBettingRound()
+        round.actionIndex = nextPlayerIndex(self.dealerButtonIndex, self.nplayers) # If player is folded, round.bettingRound handles this
 
     def _turn(self, round):
         round.boardCards[3] = self.roundCards[-2]
+        round.resetBettingRound()
+        round.actionIndex = nextPlayerIndex(self.dealerButtonIndex, self.nplayers) # If player is folded, round.bettingRound handles this
     
     def _river(self, round):
         round.boardCards[4] = self.roundCards[-1]
+        round.resetBettingRound()
+        round.actionIndex = nextPlayerIndex(self.dealerButtonIndex, self.nplayers) # If player is folded, round.bettingRound handles this
     
     @ classmethod
     def _settleHand(cls, round):

@@ -75,6 +75,9 @@ class Round:
         self.maxBet = self.bigBlind
         self.actionIndex = nextPlayerIndex(self.dealerButtonIdx, self.nplayers)
         
+    def resetBettingRound(self):
+        self.pots.currentBetSize
+
     def _finishedBetting(self) -> bool:
         """
         Has everyone called, checked or folded?

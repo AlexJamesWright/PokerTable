@@ -1,11 +1,11 @@
 from enum import Enum 
 
 class Action(Enum):
-    BLINDS = 'BLINDS'
-    CALLED = 'CALLED'
-    RAISED = 'RAISED'
-    FOLDED = 'FOLDED'
-    CHECKED = 'CHECKED'
+    RAISE = 'raise'
+    CHECK = 'check'
+    CALL = 'call'
+    FOLD = 'fold'
+    WAIT = 'wait'
     
     
 class PlayerType(Enum):
