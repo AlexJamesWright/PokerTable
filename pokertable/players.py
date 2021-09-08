@@ -1,7 +1,6 @@
 from pokertable.enums import PlayerType
-from abc import ABC, abstractmethod
 
-class Player(ABC):
+class Player:
     
     kind = PlayerType.BASE
     id = None
@@ -28,7 +27,6 @@ class Player(ABC):
         self.folded = (bet < 1e-10)
         return bet
 
-    @abstractmethod 
     def _getBet(self):
         raise NotImplementedError
 
