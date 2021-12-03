@@ -32,11 +32,6 @@ class Round:
         #   - reset largest bet size
         #   - new Pots() for self.pots
         pass 
-    
-    
-    def finishedBetting(self):
-        pass
-    
         
     def postPlayersBlindAnte(self):
         # Starting new round
@@ -67,27 +62,30 @@ class Round:
         self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
             
     def bettingRound(self):
-        self.lastRaise = self.bigBlind
+        # Start of betting round, so set all madeBets to false
+        for player in self.players:
+            player.betMade = False
+
+        self.lastRaise = self.maxBet
         while self._stillBetting():
             if not self.players[self.actionIndex].folded: self.getPlayerBet(self.players[self.actionIndex])
             self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
-        # End of betting round, reset maxBet for next betting round
+        # End of betting round, reset maxBet for next betting round and 
         self.maxBet = self.bigBlind
         self.actionIndex = nextPlayerIndex(self.dealerButtonIdx, self.nplayers)
-        
+
     def _finishedBetting(self) -> bool:
         """
         Has everyone called, checked or folded?
         """
-        return bool(np.prod([player.folded or self.pots.playerBets[player.id] == self.pots.currentBetSize for player in self.players]))
-
+        return bool(np.prod([player.betMade and (player.folded or self.pots.playerBets[player.id] == self.pots.currentBetSize) for player in self.players]))
 
     def _stillBetting(self) -> bool:
         """
         Has everyone called, checked or folded?
         """
         return not self._finishedBetting()
-        
+
     def getPlayerBet(self, player):
         self.printBettingInfo(player)
         valid = False 
@@ -97,7 +95,6 @@ class Round:
         self.pots.betSize(amount, self.players[self.actionIndex])
             
     def checkValidAmount(self, amount, player):
-
         if amount > player.stack:
             return self.invalidBetStatement(amount, self.maxBet, self.pots.currentBetSize+self.lastRaise, player.stack)
 
@@ -108,12 +105,12 @@ class Round:
                 self.lastRaise = raiseSize
             if amount > 0:
                 self.maxBet = amount
-                # TODO maxBet can be set higher than a persons stack size!
             return True
 
         return self.invalidBetStatement(amount, self.maxBet, self.pots.currentBetSize+self.lastRaise, player.stack)
 
     def invalidBetStatement(self, amount, maxBet, minRaise, stack):
+        # TODO This is not always true... can check on 0
         print(f"\nInvalid bet size of {amount}. Player's stack is {stack}.\nTo fold is 0; To call/check is {maxBet}; To min raise is {minRaise}")
         return False 
 
