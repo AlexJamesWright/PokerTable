@@ -1,6 +1,6 @@
 from pokertable.errors import PlayerTypeError
 from pokertable.enums import PlayerType
-from pokertable.players import Player, User
+from pokertable.players import Player, Setter, User
 
 
 class PlayerFactory:
@@ -12,6 +12,8 @@ class PlayerFactory:
         # TODO this would be perfect for pattern matching with py310 comes out on conda
         if kind == PlayerType.BASE:
             player = Player(stack=stack, iden=self._playersMade, kwargs=kwargs)
+        elif kind == PlayerType.SETTER:
+            player = Setter(stack=stack, iden=self._playersMade, kwargs=kwargs)
         elif kind == PlayerType.USER:
             player = User(stack=stack, iden=self._playersMade, kwargs=kwargs)
         else:
