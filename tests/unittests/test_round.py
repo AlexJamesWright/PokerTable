@@ -153,15 +153,69 @@ class TestRoundBettingRound(unittest.TestCase):
     def test_preFlopBettingSimple(self):
         players = [
             self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBet(0),
-            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBet(5), 
-            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBet(0), 
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBet(5),
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBet(0),
             self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBet(5)
             ]
 
         round = Round(players=players)
         round.postPlayersBlindAnte()
         round.bettingRound()
+        
+        self.assertEqual(len(round.pots), 1)
+        self.assertEqual(round.pots.nbettors, 3)
+        # self.assertEqual(round.pots[0].)
+
+class TestRoundFinishedBetting(unittest.TestCase):
+    
+    def setUp(self) -> None:
+        self.playerFactory = PlayerFactory()
+
+    def test_preflop(self):
+        players = [
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBet(0),
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBet(5),
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBet(0),
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBet(5)
+            ]
+
+        round = Round(players=players)
+
+        self.assertFalse(round._finishedBetting())
+        round.postPlayersBlindAnte()
+        self.assertFalse(round._finishedBetting())
+        round.bettingRound()
+        self.assertTrue(round._finishedBetting())
+
+        round.players[0].betMade = False
+        self.assertFalse(round._finishedBetting())
+
+    def test_flop(self):
+        players = [
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBets([0]),
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBets([5, 7, 10]),
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBets([0]),
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBets([5, 10])
+            ]
+
+        round = Round(players=players)
+
+        round.postPlayersBlindAnte()
+        round.bettingRound()
+        round.bettingRound()
+
+        self.assertTrue(round._finishedBetting())
+        # Whilst we're here, might as well check the pots...
+        self.assertEqual(round.pots[0].size, 22)
+
+
+
+class TestRoundCheckValidAmount(unittest.TestCase):
+
+    def setUp(self):
         pass
+
+
 
 
 if __name__ == '__main__':

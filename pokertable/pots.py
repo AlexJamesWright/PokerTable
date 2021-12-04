@@ -12,6 +12,7 @@ class Pot:
         self.playersDict = {}   # {playerid: Player}
         self.newBets = {}       # {playerid: bet amount}
         self.bets = []          # newBets for each round
+        self.finalised = False
         
     @property
     def size(self):
@@ -22,11 +23,12 @@ class Pot:
         self.newBets[player.id] = amount
         
     def finalise(self):
-        for id, amount in self.newBets.items():
-            self.playersDict[id].stack -= amount
-            
-        self.bets.append(self.newBets)
-        self.newBets = {}
+        if not self.finalised:
+            for id, amount in self.newBets.items():
+                self.playersDict[id].stack -= amount
+                
+            self.bets.append(self.newBets)
+            self.newBets = {}
             
     def __len__(self):
         """
@@ -44,7 +46,7 @@ class Pot:
         
 class Pots:
     """
-    Pot container, potentially holding multiple concurrent pots.
+    Pot container, potentially holding multiple concurrent pots. self.pots[-1] is the active pot
     """
     
     def __init__(self, players):
@@ -62,9 +64,13 @@ class Pots:
         """
         return len(self.pots)
 
+    @property 
+    def size(self):
+        return  sum([pot.size for pot in self.pots])
+
     @property
     def nbettors(self):
-        return len(self.playerBets)
+        return len(np.where(list(self.playerBets.values()))[0])
 
     @property 
     def currentBetSize(self):
@@ -73,6 +79,7 @@ class Pots:
     def betSize(self, amount, player):
         """
         Current size of bet to stay in hand, can be call, check, raise or all-in. 
+        If player does not have enough stack, they will be put all-in.
         """
         if amount > 1e-10:
             if player.has(amount):
@@ -81,22 +88,28 @@ class Pots:
                 self.playerBets[player.id] = player.stack
             self.finalised = False
          
+    def _getPlayerIDsWithBetsOfAtLeast(self, amount):
+        return [id for id, playersBet in self.playerBets.items() if playersBet>=amount]
+
     def finalise(self):
         """
         Until we finalise a round of betting, we will not take any players money. When 
         we finalise, we create the necessary pots and then reduce each players stack.
         """
         amounts = sorted(set(self.playerBets.values()))
+        if 0 in amounts: amounts.remove(0)
         
-        self._addAmountsToPot(self.pots[-1], self.playerBets.keys(), amounts[0])
+        betsInThisPot = self._getPlayerIDsWithBetsOfAtLeast(amounts[0])
+        self._addAmountsToPot(self.pots[-1], betsInThisPot, amounts[0])
         
         for potNo, amount in enumerate(amounts[1:]):
             prevAmount = amounts[potNo]
             self.pots.append(Pot(potNo=len(self.pots)))
             
-            # Drop players that are all-in
-            self.playerBets = {id: amount for id, amount in self.playerBets.items() if self.playerDict[id].stack > prevAmount}
-            self._addAmountsToPot(self.pots[-1], self.playerBets.keys(), amount-prevAmount)
+            betsInThisPot = self._getPlayerIDsWithBetsOfAtLeast(amounts[potNo+1])
+            self._addAmountsToPot(self.pots[-1], betsInThisPot, amount-prevAmount)
+        
+        
             
         # If only one player in any of the pots, the big stack has gone all in 
         # and been called. Give the big stack the left over.
@@ -112,19 +125,22 @@ class Pots:
             pot.finalise()
             
         self.playerBets = {}
-        self.finalised = True
+        # self.finalised = True
             
     def _addAmountsToPot(self, pot, playerids, amount):
         for playerid in playerids:
             pot.betSize(amount, self.playerDict[playerid])
         
     def __repr__(self):
+        s = ''
         if self.finalised:
-            s = ''
             for pot in self.pots:
                 s += pot.__repr__()
+                s += '\n'
         else:
             s = 'Unfinalised pots:'
             for id, playerbet in self.playerBets.items():
                 s += f'\n\tPlayer {id}: bet={playerbet}, stack={self.playerDict[id].stack}'
+
+            s += f'\n\nPot size = {self.size+sum(self.playerBets.values())}'
         return s

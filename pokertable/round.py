@@ -19,6 +19,7 @@ class Round:
         self.actionIndex = None
         self.pots = Pots(self.players)
         self.boardCards = [None, None, None, None, None]
+        self.lastRaise = 0
         
     @property 
     def nplayers(self):
@@ -58,27 +59,33 @@ class Round:
         self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
     
     def _postBigBlind(self):
-        self.pots.betSize(self.bigBlind+self.ante, self.players[self.actionIndex])
-        self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
-            
+        if self.checkValidAmount(self.bigBlind+self.ante, self.players[self.actionIndex]):
+            self.pots.betSize(self.bigBlind+self.ante, self.players[self.actionIndex])
+            self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
+        else:
+            raise RuntimeError('Error posting big blind')
+
     def bettingRound(self):
         # Start of betting round, so set all madeBets to false
         for player in self.players:
-            player.betMade = False
+            if not player.folded:
+                player.betMade = False
 
-        self.lastRaise = self.maxBet
         while self._stillBetting():
             if not self.players[self.actionIndex].folded: self.getPlayerBet(self.players[self.actionIndex])
             self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
         # End of betting round, reset maxBet for next betting round and 
         self.maxBet = self.bigBlind
+        self.lastRaise = 0
         self.actionIndex = nextPlayerIndex(self.dealerButtonIdx, self.nplayers)
+
+        self.pots.finalise()
 
     def _finishedBetting(self) -> bool:
         """
         Has everyone called, checked or folded?
         """
-        return bool(np.prod([player.betMade and (player.folded or self.pots.playerBets[player.id] == self.pots.currentBetSize) for player in self.players]))
+        return bool(np.prod([player.betMade and (player.folded or (player.id in self.pots.playerBets and self.pots.playerBets[player.id] == self.pots.currentBetSize)) for player in self.players]))
 
     def _stillBetting(self) -> bool:
         """
@@ -93,6 +100,8 @@ class Round:
             amount = self.players[self.actionIndex].getBet()
             valid = self.checkValidAmount(amount, player)
         self.pots.betSize(amount, self.players[self.actionIndex])
+        if amount == 0 and self.lastRaise > 0:
+            player.folded = True
             
     def checkValidAmount(self, amount, player):
         if amount > player.stack:
@@ -110,12 +119,17 @@ class Round:
         return self.invalidBetStatement(amount, self.maxBet, self.pots.currentBetSize+self.lastRaise, player.stack)
 
     def invalidBetStatement(self, amount, maxBet, minRaise, stack):
-        # TODO This is not always true... can check on 0
+        # TODO This is not always true... can check on 0 post flop
         print(f"\nInvalid bet size of {amount}. Player's stack is {stack}.\nTo fold is 0; To call/check is {maxBet}; To min raise is {minRaise}")
         return False 
 
     def printBettingInfo(self, player):
         print('\n\n')
+
+        #####################
+        # Why does the size of the pot say zero here when we debug, after the blind 
+
         print(self.pots)
+        print(f'Current bet = {self.lastRaise}')
         print(f"\nBoard = {self.boardCards}")
         print(player)

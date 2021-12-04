@@ -1,4 +1,5 @@
 from pokertable.enums import PlayerType
+import numpy as np
 
 class Player:
     
@@ -25,7 +26,6 @@ class Player:
     
     def getBet(self):
         bet = self._getBet()
-        self.folded = (bet < 1e-10)
         self.betMade = True
         return bet
 
@@ -46,16 +46,18 @@ class Setter(Player):
 
     def __init__(self, stack: float, iden: int=None, **kwargs):
         super().__init__(stack, iden, **kwargs)
-        self._betNumber = 0
         self.bets = []
 
     def setBet(self, betSize): 
         self.bets.append(betSize) 
         return self
 
+    def setBets(self, betSizes):
+        self.bets += betSizes
+        return self
+
     def _getBet(self):
-        self._betNumber += 1
-        return self.bets[-1]
+        return self.bets.pop(0)
 
 class User(Player):
 

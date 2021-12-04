@@ -39,40 +39,50 @@ class Game:
             # round.newRound() TODO Replace line above when implemented
             self.playHand(round)
 
-        
-    def playHand(self, round):
+    def _preflopBetting(self, round):
         round.postPlayersBlindAnte()
         self._distributeHoleCards()
         round.bettingRound() 
-        self._flop(round)
-        print("The next round of betting doesnt work as Round thinks all betting has finished!")
+
+    def _flopBetting(self, round):
+        self._flopCards(round)
         round.bettingRound()
-        self._turn(round)
+
+    def _turnBetting(self, round):
+        self._turnCards(round)
         round.bettingRound() 
-        self._river(round)
+
+    def _riverBetting(self, round):
+        self._riverCards(round)
         round.bettingRound()
+    
+    def _postriverBetting(self, round):
         self._settleHand(round)
         self._finalise(round)
-        
+
+    def playHand(self, round):
+        self._preflopBetting(round)
+        self._flopBetting(round)
+        self._turnBetting(round)
+        self._riverBetting(round)
+        self._postriverBetting(round)
+
     def _distributeHoleCards(self):
         for i, player in enumerate(self.playersList):
             player.setCard(self.roundCards[i])
         for i, player in enumerate(self.playersList):
             player.setCard(self.roundCards[i+self.nplayers])
     
-    def _flop(self, round):
+    def _flopCards(self, round):
         round.boardCards[:3] = self.roundCards[-5:-2]
-        round.resetBettingRound()
         round.actionIndex = nextPlayerIndex(self.dealerButtonIndex, self.nplayers) # If player is folded, round.bettingRound handles this
 
-    def _turn(self, round):
+    def _turnCards(self, round):
         round.boardCards[3] = self.roundCards[-2]
-        round.resetBettingRound()
         round.actionIndex = nextPlayerIndex(self.dealerButtonIndex, self.nplayers) # If player is folded, round.bettingRound handles this
     
-    def _river(self, round):
+    def _riverCards(self, round):
         round.boardCards[4] = self.roundCards[-1]
-        round.resetBettingRound()
         round.actionIndex = nextPlayerIndex(self.dealerButtonIndex, self.nplayers) # If player is folded, round.bettingRound handles this
     
     @ classmethod
