@@ -73,12 +73,6 @@ class Round:
         # End of betting round, reset maxBet for next betting round and 
         self.maxBet = self.bigBlind
         self.actionIndex = nextPlayerIndex(self.dealerButtonIdx, self.nplayers)
-<<<<<<< HEAD
-        
-    def resetBettingRound(self):
-        self.pots.currentBetSize
-=======
->>>>>>> 702cd7df4035d3d5b1f9daa365c2d2c265e77052
 
     def _finishedBetting(self) -> bool:
         """
