@@ -11,3 +11,4 @@ class Action(Enum):
 class PlayerType(Enum):
     BASE = 'BasePlayer'
     USER = 'UserPlayer'
+    SETTER = 'SetterPlayer'

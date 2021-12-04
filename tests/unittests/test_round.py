@@ -1,5 +1,5 @@
 from pokertable.playerfactory import PlayerFactory
-from pokertable.players import Player
+from pokertable.enums import PlayerType
 from pokertable.round import Round
 import unittest
 
@@ -145,21 +145,23 @@ class TestRoundPostBlindAnte(unittest.TestCase):
         self.assertEqual(round.dealerButtonIdx, 0)
     
     
-# class TestRoundFinishedBettering(unittest.TestCase):
+class TestRoundBettingRound(unittest.TestCase):
     
-#     def setUp(self) -> None:
-#         self.playerFactory = PlayerFactory()
+    def setUp(self) -> None:
+        self.playerFactory = PlayerFactory()
     
-#     def test_preFlopBettingSimple(self):
-#         players = [
-#             self.playerFactory.newPlayer(stack=10),
-#             self.playerFactory.newPlayer(stack=10), 
-#             self.playerFactory.newPlayer(stack=10), 
-#             self.playerFactory.newPlayer(stack=10)
-#             ]
-#         round = Round(players=players)
-#         round.postPlayersBlindAnte()
-#         round.
+    def test_preFlopBettingSimple(self):
+        players = [
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBet(0),
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBet(5), 
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBet(0), 
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBet(5)
+            ]
+
+        round = Round(players=players)
+        round.postPlayersBlindAnte()
+        round.bettingRound()
+        pass
 
 
 if __name__ == '__main__':
