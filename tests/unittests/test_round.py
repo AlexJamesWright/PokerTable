@@ -162,7 +162,7 @@ class TestRoundBettingRound(unittest.TestCase):
         round.postPlayersBlindAnte()
         round.bettingRound()
         
-        self.assertEqual(len(round.pots), 1)
+        self.assertEqual(len(round.pots), 2)
         self.assertEqual(round.pots.nbettors, 3)
         # self.assertEqual(round.pots[0].)
 
@@ -187,15 +187,12 @@ class TestRoundFinishedBetting(unittest.TestCase):
         round.bettingRound()
         self.assertTrue(round._finishedBetting())
 
-        round.players[0].betMade = False
-        self.assertFalse(round._finishedBetting())
-
     def test_flop(self):
         players = [
             self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBets([0]),
-            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBets([5, 7, 10]),
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBets([5, 2, 5]),
             self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBets([0]),
-            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBets([5, 10])
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBets([5, 5])
             ]
 
         round = Round(players=players)
@@ -206,7 +203,7 @@ class TestRoundFinishedBetting(unittest.TestCase):
 
         self.assertTrue(round._finishedBetting())
         # Whilst we're here, might as well check the pots...
-        self.assertEqual(round.pots[0].size, 22)
+        self.assertEqual(round.pots.size, 22)
 
 
 

@@ -70,6 +70,7 @@ class Round:
         for player in self.players:
             if not player.folded:
                 player.betMade = False
+        self.pots.finalised = False
 
         while self._stillBetting():
             if not self.players[self.actionIndex].folded: self.getPlayerBet(self.players[self.actionIndex])
@@ -85,7 +86,7 @@ class Round:
         """
         Has everyone called, checked or folded?
         """
-        return bool(np.prod([player.betMade and (player.folded or (player.id in self.pots.playerBets and self.pots.playerBets[player.id] == self.pots.currentBetSize)) for player in self.players]))
+        return self.pots.finalised or bool(np.prod([player.betMade and (player.folded or (player.id in self.pots.playerBets and self.pots.playerBets[player.id] == self.pots.currentBetSize)) for player in self.players]))
 
     def _stillBetting(self) -> bool:
         """

@@ -23,12 +23,11 @@ class Pot:
         self.newBets[player.id] = amount
         
     def finalise(self):
-        if not self.finalised:
-            for id, amount in self.newBets.items():
-                self.playersDict[id].stack -= amount
-                
-            self.bets.append(self.newBets)
-            self.newBets = {}
+        for id, amount in self.newBets.items():
+            self.playersDict[id].stack -= amount
+            
+        self.bets.append(self.newBets)
+        self.newBets = {}
             
     def __len__(self):
         """
@@ -109,7 +108,7 @@ class Pots:
             betsInThisPot = self._getPlayerIDsWithBetsOfAtLeast(amounts[potNo+1])
             self._addAmountsToPot(self.pots[-1], betsInThisPot, amount-prevAmount)
         
-        
+        self.finalised = True
             
         # If only one player in any of the pots, the big stack has gone all in 
         # and been called. Give the big stack the left over.
