@@ -14,7 +14,7 @@ class Round:
         self.dealerButtonIdx = dealerButtonIdx
         self.smallBlind = smallBlind 
         self.bigBlind = bigBlind or 2*smallBlind
-        self.maxBet = self.bigBlind
+        self.maxBet = 0
         self.ante = ante
         self.actionIndex = None
         self.pots = Pots(self.players)
@@ -59,13 +59,12 @@ class Round:
         self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
     
     def _postBigBlind(self):
-        if self.checkValidAmount(self.bigBlind+self.ante, self.players[self.actionIndex]):
-            self.pots.betSize(self.bigBlind+self.ante, self.players[self.actionIndex])
-            self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
-        else:
-            raise RuntimeError('Error posting big blind')
+        self.pots.betSize(self.bigBlind+self.ante, self.players[self.actionIndex])
+        self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
+        self.maxBet = self.bigBlind+self.ante
+        self.lastRaise = 0
 
-    def bettingRound(self):
+    def bettingRound(self, finalisePots=True):
         # Start of betting round, so set all madeBets to false
         for player in self.players:
             if not player.folded:
@@ -80,7 +79,7 @@ class Round:
         self.lastRaise = 0
         self.actionIndex = nextPlayerIndex(self.dealerButtonIdx, self.nplayers)
 
-        self.pots.finalise()
+        if finalisePots: self.pots.finalise()
 
     def _finishedBetting(self) -> bool:
         """
@@ -105,11 +104,14 @@ class Round:
             player.folded = True
             
     def checkValidAmount(self, amount, player):
+            
+        allIn = False
         if amount > player.stack:
-            return self.invalidBetStatement(amount, self.maxBet, self.pots.currentBetSize+self.lastRaise, player.stack)
+            amount = player.stack
+            allIn = True
 
         raiseSize = amount - self.maxBet
-        if amount==0 or raiseSize==0 or raiseSize>=self.lastRaise:
+        if amount==0 or raiseSize==0 or raiseSize>=self.lastRaise or allIn:
             # if call/check or raise
             if amount > self.maxBet: 
                 self.lastRaise = raiseSize

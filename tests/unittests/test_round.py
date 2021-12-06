@@ -160,11 +160,13 @@ class TestRoundBettingRound(unittest.TestCase):
 
         round = Round(players=players)
         round.postPlayersBlindAnte()
-        round.bettingRound()
+        round.bettingRound(finalisePots=False)
         
-        self.assertEqual(len(round.pots), 2)
         self.assertEqual(round.pots.nbettors, 3)
-        # self.assertEqual(round.pots[0].)
+        round.pots.finalise()
+        self.assertEqual(len(round.pots), 2)
+        self.assertEqual(round.pots[0].size, 6)
+        self.assertEqual(round.pots[1].size, 6)
 
 class TestRoundFinishedBetting(unittest.TestCase):
     
@@ -210,8 +212,23 @@ class TestRoundFinishedBetting(unittest.TestCase):
 class TestRoundCheckValidAmount(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.playerFactory = PlayerFactory()
 
+    def test_antes(self):
+        players = [
+            self.playerFactory.newPlayer(stack=10),
+            self.playerFactory.newPlayer(stack=20), 
+            self.playerFactory.newPlayer(stack=10), 
+            self.playerFactory.newPlayer(stack=2)
+            ]
+        round = Round(players=players, smallBlind=2, ante=1)
+
+        # Manually post antes and blinds
+        self.assertTrue(round.checkValidAmount(1, players[0]))
+        self.assertTrue(round.checkValidAmount(1, players[0]))
+        self.assertTrue(round.checkValidAmount(1, players[0]))
+        self.assertTrue(round.checkValidAmount(1, players[0]))
+        self.assertTrue(round.checkValidAmount(1, players[0]))
 
 
 
