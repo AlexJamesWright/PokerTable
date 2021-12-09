@@ -207,6 +207,24 @@ class TestRoundFinishedBetting(unittest.TestCase):
         # Whilst we're here, might as well check the pots...
         self.assertEqual(round.pots.size, 22)
 
+    def test_flop2(self):
+        players = [
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBets([0]),
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=20).setBets([8, 2]),
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=10).setBets([8, 2]),
+            self.playerFactory.newPlayer(kind=PlayerType.SETTER, stack=2).setBets([2])
+            ]
+
+        round = Round(players=players, smallBlind=2, ante=1)
+
+        round.postPlayersBlindAnte()
+        round.bettingRound()
+        round.bettingRound()
+
+        self.assertTrue(round._finishedBetting())
+        # Whilst we're here, might as well check the pots...
+        self.assertEqual(round.pots.size, 23)
+
 
 
 class TestRoundCheckValidAmount(unittest.TestCase):
@@ -225,10 +243,18 @@ class TestRoundCheckValidAmount(unittest.TestCase):
 
         # Manually post antes and blinds
         self.assertTrue(round.checkValidAmount(1, players[0]))
-        self.assertTrue(round.checkValidAmount(1, players[0]))
-        self.assertTrue(round.checkValidAmount(1, players[0]))
-        self.assertTrue(round.checkValidAmount(1, players[0]))
-        self.assertTrue(round.checkValidAmount(1, players[0]))
+        self.assertTrue(round.checkValidAmount(1, players[1]))
+        self.assertTrue(round.checkValidAmount(1, players[2]))
+        self.assertTrue(round.checkValidAmount(1, players[3]))
+
+        round.postPlayersBlindAnte()
+        round.pots.finalise()
+
+        self.assertEqual(players[0].stack, 9)
+        self.assertEqual(players[1].stack, 17)
+        self.assertEqual(players[2].stack, 5)
+        self.assertEqual(players[3].stack, 1)
+
 
 
 

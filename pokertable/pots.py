@@ -110,13 +110,13 @@ class Pots:
         
         self.finalised = True
             
-        # If only one player in any of the pots, the big stack has gone all in 
-        # and been called. Give the big stack the left over.
-        if len(self.pots[-1]) == 1:
-            player = list(self.pots[-1].playersDict.values())[0]
-            amount = self.pots[-1].size
-            player.stack += amount 
-            self.pots = self.pots[:-1]
+        # # If only one player in any of the pots, the big stack has gone all in 
+        # # and been called. Give the big stack the left over.
+        # if len(self.pots[-1]) == 1:
+        #     player = list(self.pots[-1].playersDict.values())[0]
+        #     amount = self.pots[-1].size
+        #     player.stack += amount 
+        #     self.pots = self.pots[:-1]
             
             
         # Take players bets from stack

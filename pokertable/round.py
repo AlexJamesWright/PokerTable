@@ -62,7 +62,7 @@ class Round:
         self.pots.betSize(self.bigBlind+self.ante, self.players[self.actionIndex])
         self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
         self.maxBet = self.bigBlind+self.ante
-        self.lastRaise = 0
+        self.lastRaise = self.smallBlind
 
     def bettingRound(self, finalisePots=True):
         # Start of betting round, so set all madeBets to false
@@ -94,24 +94,24 @@ class Round:
         return not self._finishedBetting()
 
     def getPlayerBet(self, player):
-        self.printBettingInfo(player)
-        valid = False 
-        while not valid:
-            amount = self.players[self.actionIndex].getBet()
-            valid = self.checkValidAmount(amount, player)
-        self.pots.betSize(amount, self.players[self.actionIndex])
-        if amount == 0 and self.lastRaise > 0:
-            player.folded = True
+        if not player.allIn:
+            self.printBettingInfo(player)
+            valid = False 
+            while not valid:
+                amount = self.players[self.actionIndex].getBet()
+                valid = self.checkValidAmount(amount, player)
+            self.pots.betSize(amount, self.players[self.actionIndex])
+            if amount == 0 and self.lastRaise > 0:
+                player.folded = True
             
     def checkValidAmount(self, amount, player):
             
-        allIn = False
-        if amount > player.stack:
+        if amount >= player.stack:
             amount = player.stack
-            allIn = True
+            player.allIn = True
 
         raiseSize = amount - self.maxBet
-        if amount==0 or raiseSize==0 or raiseSize>=self.lastRaise or allIn:
+        if amount==0 or raiseSize==0 or raiseSize>=self.lastRaise or player.allIn:
             # if call/check or raise
             if amount > self.maxBet: 
                 self.lastRaise = raiseSize

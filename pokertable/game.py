@@ -38,6 +38,9 @@ class Game:
             round = Round(self.playersList, self.dealerButtonIndex)
             # round.newRound() TODO Replace line above when implemented
             self.playHand(round)
+            # Reset player variables
+            for player in self.playersList:
+                player.reset()
 
     def _preflopBetting(self, round):
         round.postPlayersBlindAnte()

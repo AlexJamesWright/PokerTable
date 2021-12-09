@@ -12,6 +12,7 @@ class Player:
         self.__holeCards = [None, None]
         self.folded = False
         self.betMade = False
+        self.allIn = False
 
     def setCard(self, card):
         if not self.__holeCards[0]:
@@ -38,6 +39,13 @@ class Player:
     
     def __repr__(self):
         return f"Player {self.id}:\n\tstack = {self.stack}\n\thole cards = {self.__holeCards}"
+
+    def reset(self):
+        self.__holeCards = [None, None]
+        self.folded = False
+        self.betMade = False
+        self.allIn = False
+
 
 
 class Setter(Player):
