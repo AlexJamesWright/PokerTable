@@ -53,39 +53,50 @@ class Round:
     def _postAntes(self):
         for player in self.players:
             self.pots.betSize(self.ante, player)
+        self.pots.finalise()
 
     def _postSmallBlind(self):
         self.pots.betSize(self.smallBlind+self.ante, self.players[self.actionIndex])
-        self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
+        self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers, self.players)
     
     def _postBigBlind(self):
         self.pots.betSize(self.bigBlind+self.ante, self.players[self.actionIndex])
-        self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
+        self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers, self.players)
         self.maxBet = self.bigBlind+self.ante
         self.lastRaise = self.smallBlind
 
-    def bettingRound(self, finalisePots=True):
+    def _prepareBettingRound(self):
         # Start of betting round, so set all madeBets to false
         for player in self.players:
-            if not player.folded:
+            if not player.folded and not player.allIn:
                 player.betMade = False
         self.pots.finalised = False
 
+    def bettingRound(self, finalisePots=True):
+       
+        self._prepareBettingRound()
+
         while self._stillBetting():
             if not self.players[self.actionIndex].folded: self.getPlayerBet(self.players[self.actionIndex])
-            self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers)
+            self.actionIndex = nextPlayerIndex(self.actionIndex, self.nplayers, self.players)
         # End of betting round, reset maxBet for next betting round and 
         self.maxBet = self.bigBlind
         self.lastRaise = 0
-        self.actionIndex = nextPlayerIndex(self.dealerButtonIdx, self.nplayers)
+        self.actionIndex = nextPlayerIndex(self.dealerButtonIdx, self.nplayers, self.players)
 
         if finalisePots: self.pots.finalise()
+
+    def _playerListOfFinishedBetting(self):
+        return [player.betMade and (player.folded or player.allIn or (player.id in self.pots.playerBets and self.pots.playerBets[player.id] == self.pots.currentBetSize)) for player in self.players]
+
+    def _playerListOfActiveBetting(self):
+        return np.logical_not(self._playerListOfFinishedBetting())
 
     def _finishedBetting(self) -> bool:
         """
         Has everyone called, checked or folded?
         """
-        return self.pots.finalised or bool(np.prod([player.betMade and (player.folded or (player.id in self.pots.playerBets and self.pots.playerBets[player.id] == self.pots.currentBetSize)) for player in self.players]))
+        return self.pots.finalised or bool(np.prod(self._playerListOfFinishedBetting()))
 
     def _stillBetting(self) -> bool:
         """
@@ -98,9 +109,9 @@ class Round:
             self.printBettingInfo(player)
             valid = False 
             while not valid:
-                amount = self.players[self.actionIndex].getBet()
+                amount = player.getBet()
                 valid = self.checkValidAmount(amount, player)
-            self.pots.betSize(amount, self.players[self.actionIndex])
+            self.pots.betSize(amount, player)
             if amount == 0 and self.lastRaise > 0:
                 player.folded = True
             
@@ -116,6 +127,7 @@ class Round:
             if amount > self.maxBet: 
                 self.lastRaise = raiseSize
             if amount > 0:
+                # This is the new largest bet (or equal size)
                 self.maxBet = amount
             return True
 
@@ -128,10 +140,6 @@ class Round:
 
     def printBettingInfo(self, player):
         print('\n\n')
-
-        #####################
-        # Why does the size of the pot say zero here when we debug, after the blind 
-
         print(self.pots)
         print(f'Current bet = {self.lastRaise}')
         print(f"\nBoard = {self.boardCards}")

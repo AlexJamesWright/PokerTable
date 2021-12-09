@@ -40,7 +40,7 @@ class Pot:
         for r, roundBetting in enumerate(self.bets):
             pdictstr += f'\n\tRound {r}:'
             for id, amount in roundBetting.items():
-                pdictstr += '\n\t\t' + self.playersDict[id].__repr__() + f', bet={amount}'
+                pdictstr += '\n\t\t' + self.playersDict[id].__repr__().replace('\t', '\t\t\t') + f', bet={amount}'
         return f'Pot {self.id}: size={self.size}' + pdictstr
         
 class Pots:
@@ -98,25 +98,26 @@ class Pots:
         amounts = sorted(set(self.playerBets.values()))
         if 0 in amounts: amounts.remove(0)
         
-        betsInThisPot = self._getPlayerIDsWithBetsOfAtLeast(amounts[0])
-        self._addAmountsToPot(self.pots[-1], betsInThisPot, amounts[0])
-        
-        for potNo, amount in enumerate(amounts[1:]):
-            prevAmount = amounts[potNo]
-            self.pots.append(Pot(potNo=len(self.pots)))
+        if amounts:
+            betsInThisPot = self._getPlayerIDsWithBetsOfAtLeast(amounts[0])
+            self._addAmountsToPot(self.pots[-1], betsInThisPot, amounts[0])
             
-            betsInThisPot = self._getPlayerIDsWithBetsOfAtLeast(amounts[potNo+1])
-            self._addAmountsToPot(self.pots[-1], betsInThisPot, amount-prevAmount)
+            for potNo, amount in enumerate(amounts[1:]):
+                prevAmount = amounts[potNo]
+                self.pots.append(Pot(potNo=len(self.pots)))
+                
+                betsInThisPot = self._getPlayerIDsWithBetsOfAtLeast(amounts[potNo+1])
+                self._addAmountsToPot(self.pots[-1], betsInThisPot, amount-prevAmount)
         
         self.finalised = True
             
         # # If only one player in any of the pots, the big stack has gone all in 
         # # and been called. Give the big stack the left over.
-        # if len(self.pots[-1]) == 1:
-        #     player = list(self.pots[-1].playersDict.values())[0]
-        #     amount = self.pots[-1].size
-        #     player.stack += amount 
-        #     self.pots = self.pots[:-1]
+        if len(self.pots[-1]) == 1:
+            player = list(self.pots[-1].playersDict.values())[0]
+            amount = self.pots[-1].size
+            player.stack += amount 
+            self.pots = self.pots[:-1]
             
             
         # Take players bets from stack
@@ -124,7 +125,6 @@ class Pots:
             pot.finalise()
             
         self.playerBets = {}
-        # self.finalised = True
             
     def _addAmountsToPot(self, pot, playerids, amount):
         for playerid in playerids:
